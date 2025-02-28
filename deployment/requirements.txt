@@ -1,0 +1,5 @@
+ansible
+openshift
+# The below versions will vary based on your version of Kubernetes
+kubernetes~=31.0
+kubernetes-validate~=1.31.0

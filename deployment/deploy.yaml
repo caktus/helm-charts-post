@@ -1,0 +1,32 @@
+- name: Helm Charts Post deployment
+  hosts: k8s
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  tasks:
+    - name: Create helm-charts-post namespace
+      kubernetes.core.k8s:
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
+        name: "{{ k8s_namespace }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+    - name: Add helm-charts-post Helm chart
+      kubernetes.core.helm:
+        state: present
+        context: "{{ k8s_context|mandatory }}"
+        kubeconfig: "{{ k8s_kubeconfig }}"
+        # To test local chart. Update with the path to the chart
+        # chart_ref: ../../helm-charts-post/charts/helm-charts-post/
+        # dependency_update: yes
+
+        # Use released chart:
+        chart_repo_url: https://caktus.github.io/helm-charts-post
+        chart_ref: helm-charts-post
+        chart_version: "{{ k8s_chart_version }}"
+
+        release_name: helm-charts-post
+        release_namespace: "{{ k8s_namespace }}"
+        release_values: "{{ k8s_release_values }}"
+        wait: yes

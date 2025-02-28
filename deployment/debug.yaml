@@ -1,0 +1,12 @@
+- name: Debug Helm Charts Post deployment variables
+  hosts: k8s
+  gather_facts: false
+  tasks:
+    - debug:
+        msg:
+          - k8s_release_values: "{{ k8s_release_values }}"
+          - ansible_playbook_python: "{{ ansible_playbook_python }}"
+          - k8s_context: "{{ k8s_context }}"
+          - k8s_kubeconfig: "{{ k8s_kubeconfig }}"
+          - k8s_namespace: "{{ k8s_namespace }}"
+          - k8s_chart_version: "{{ k8s_chart_version }}"

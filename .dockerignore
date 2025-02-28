@@ -1,0 +1,9 @@
+.travis.yml
+__pycache__
+check.py
+db.sqlite3
+docker-compose.yml
+Dockerfile
+setup.cfg
+.direnv
+.envrc

@@ -1,0 +1,42 @@
+k8s:
+  hosts:
+    # Update with the IP addresses of your hosts, and remove `ansible_connection: local` if not running Kubernetes locally
+    127.0.0.1: {ansible_connection: local}
+
+  # Variables can be in separate vars files, but we are keeping them here for simplicity
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    # The config file for your Kubernetes cluster
+    k8s_kubeconfig: /var/snap/microk8s/current/credentials/client.config
+    # The name of the context in the config file
+    k8s_context: microk8s
+    # The k8s namepace to be used for this deployment
+    k8s_namespace: helm-charts-post
+    k8s_chart_version: 0.1.0
+    # Values that will be passed to our Helm chart
+    k8s_release_values:
+      image:
+        # Replace with the tag for your container image
+        tag: main
+      ingress:
+        enabled: true
+        className: nginx
+        annotations:
+          kubernetes.io/ingress.class: nginx
+          nginx.org/mergeable-ingress-type: master
+          nginx.ingress.kubernetes.io/proxy-body-size: 100m
+        hosts:
+          - host: helm-charts-post.local
+            paths:
+              - path: /
+                pathType: ImplementationSpecific
+        tls:
+          - secretName: helm-charts-post-tls
+            hosts:
+              - helm-charts-post.local
+      environmentVariables:
+        # Add all the environment variables for your application here.
+        # Ideally the DATABASE_URL (and any other secret values) should be encrypted with `ansible-vault encrypt`
+        DATABASE_URL: postgres://app_user:changeme@172.22.0.1:9061/app_db
+        ALLOWED_HOSTS: "*"
+        DJANGO_MANAGEPY_MIGRATE: "on"
