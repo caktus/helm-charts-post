@@ -6,6 +6,8 @@ on:
     # Change this to the branches you want to trigger a new Helm chart release
     branches:
       - main
+  # Allow running manual via the GitHub Actions Web UI:
+  workflow_dispatch:
 
 jobs:
   release:
